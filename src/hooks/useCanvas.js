@@ -1,14 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
 
-
 /**
  * useCanvas — Hook d'état central pour les éléments placés sur le configurateur.
  *
  * Coordonnées : x et y sont stockés en POURCENTAGE (0–100) du conteneur parent.
- * Cela garantit que les éléments restent au bon endroit même si la fenêtre est
- * redimensionnée ou si le navigateur est zoomé.
- *
  * Dimensions : width et height sont stockés en pixels absolus.
+ * zIndex : géré par zone (velours / circulaire) pour un ordonnancement prévisible des calques.
  */
 export function useCanvas() {
   const [items, setItems] = useState([]);
@@ -17,12 +14,27 @@ export function useCanvas() {
   // ── Ajout d'un élément dans une zone ──────────────────────────────────────
   const addItem = useCallback((itemData, zone = 'velours') => {
     const id = `item-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
-    const maxZ = items.reduce((m, i) => Math.max(m, i.zIndex), 0);
+    const zoneItems = items.filter(i => i.zone === zone);
+    const maxZ = zoneItems.reduce((m, i) => Math.max(m, i.zIndex ?? 0), 0);
+
+    const itemType = itemData.type || (itemData.svg ? (itemData.category === 'ecussons' ? 'ecusson_ville' : 'insigne') : (itemData.text ? 'text' : 'insigne'));
+
+    let width = itemData.defaultWidth ?? (itemType === 'insigne' ? 45 : 80);
+    let height = itemData.defaultHeight ?? (itemType === 'insigne' ? 45 : 24);
 
     let x = 15 + Math.random() * 30;
     let y = 15 + Math.random() * 30;
 
-    if ((itemData.type === 'ruban_asso' || itemData.type === 'ruban_ville') && zone === 'velours') {
+    if (zone === 'circulaire') {
+      y = 18;
+      if (itemType === 'insigne' && height > 44) {
+        const scale = 42 / height;
+        width = Math.round(width * scale);
+        height = 42;
+      }
+    }
+
+    if ((itemType === 'ruban_asso' || itemType === 'ruban_ville') && zone === 'velours') {
       x = 0;
       y = 0;
     }
@@ -30,7 +42,7 @@ export function useCanvas() {
     const newItem = {
       id,
       zone,
-      type: itemData.type,             // 'insigne' | 'ruban_asso' | 'ruban_ville' | 'ecusson_ville'
+      type: itemType,             // 'insigne' | 'ruban_asso' | 'ruban_ville' | 'ecusson_ville' | 'text' | 'ruban_filiere'
       dataId: itemData.id,
       label: itemData.label,
       // Visuel
@@ -39,6 +51,8 @@ export function useCanvas() {
       pattern: itemData.pattern ?? null,
       text: itemData.text ?? null,
       color: itemData.color ?? null,
+      texture: itemData.texture ?? null,
+      filiereName: itemData.filiereName ?? null,
       // Statut (pour les rubans d'association)
       status: itemData.status ?? null,
       statusBorderColor: itemData.statusBorderColor ?? null,
@@ -46,10 +60,10 @@ export function useCanvas() {
       // Géométrie — x, y en % du conteneur (0–100), width/height en px
       x,
       y,
-      width: itemData.defaultWidth ?? 80,
-      height: itemData.defaultHeight ?? 24,
+      width,
+      height,
       rotation: 0,
-      zIndex: maxZ + 1,
+      zIndex: Math.max(10, maxZ + 1),
     };
     setItems(prev => [...prev, newItem]);
     setSelectedId(id);
@@ -67,35 +81,102 @@ export function useCanvas() {
     setSelectedId(prev => prev === id ? null : prev);
   }, []);
 
-  // ── Z-index : monter d'un cran ─────────────────────────────────────────────
-  const bringForward = useCallback((id) => {
+  // ── Duplication d'un élément ──────────────────────────────────────────────
+  const duplicateItem = useCallback((id) => {
     setItems(prev => {
-      const sorted = [...prev].sort((a, b) => a.zIndex - b.zIndex);
-      const idx = sorted.findIndex(i => i.id === id);
-      if (idx === sorted.length - 1) return prev;
-      const above = sorted[idx + 1];
+      const target = prev.find(i => i.id === id);
+      if (!target) return prev;
+      const newId = `item-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
+      const zoneItems = prev.filter(i => i.zone === target.zone);
+      const maxZ = zoneItems.reduce((m, i) => Math.max(m, i.zIndex ?? 0), 0);
+
+      const isLocked = (target.type === 'ruban_asso' || target.type === 'ruban_ville') && target.zone === 'velours';
+      const duplicated = {
+        ...target,
+        id: newId,
+        x: isLocked ? 0 : Math.min(90, target.x + 3),
+        y: isLocked ? 0 : Math.min(90, target.y + 3),
+        zIndex: maxZ + 1,
+      };
+      setSelectedId(newId);
+      return [...prev, duplicated];
+    });
+  }, []);
+
+  // ── Helper interne : réordonner au sein de la même zone ───────────────────
+  const reorderZone = useCallback((id, transformList) => {
+    setItems(prev => {
+      const target = prev.find(i => i.id === id);
+      if (!target) return prev;
+
+      // Éléments de la même zone, triés par zIndex croissant
+      const zoneItems = prev
+        .filter(i => i.zone === target.zone)
+        .sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0));
+
+      const newZoneList = transformList([...zoneItems], target);
+      if (!newZoneList) return prev;
+
+      // Normaliser les zIndex : 1, 2, 3...
+      const zIndexMap = new Map();
+      newZoneList.forEach((item, index) => {
+        zIndexMap.set(item.id, index + 1);
+      });
+
       return prev.map(item => {
-        if (item.id === id) return { ...item, zIndex: above.zIndex };
-        if (item.id === above.id) return { ...item, zIndex: sorted[idx].zIndex };
+        if (zIndexMap.has(item.id)) {
+          return { ...item, zIndex: zIndexMap.get(item.id) };
+        }
         return item;
       });
     });
   }, []);
 
-  // ── Z-index : descendre d'un cran ─────────────────────────────────────────
-  const sendBackward = useCallback((id) => {
-    setItems(prev => {
-      const sorted = [...prev].sort((a, b) => a.zIndex - b.zIndex);
-      const idx = sorted.findIndex(i => i.id === id);
-      if (idx === 0) return prev;
-      const below = sorted[idx - 1];
-      return prev.map(item => {
-        if (item.id === id) return { ...item, zIndex: below.zIndex };
-        if (item.id === below.id) return { ...item, zIndex: sorted[idx].zIndex };
-        return item;
-      });
+  // ── Z-index : monter d'un cran (avancer de plan) ──────────────────────────
+  const bringForward = useCallback((id) => {
+    reorderZone(id, (list, target) => {
+      const idx = list.findIndex(i => i.id === target.id);
+      if (idx === -1 || idx === list.length - 1) return null;
+      const next = list[idx + 1];
+      list[idx + 1] = list[idx];
+      list[idx] = next;
+      return list;
     });
-  }, []);
+  }, [reorderZone]);
+
+  // ── Z-index : descendre d'un cran (reculer de plan) ───────────────────────
+  const sendBackward = useCallback((id) => {
+    reorderZone(id, (list, target) => {
+      const idx = list.findIndex(i => i.id === target.id);
+      if (idx <= 0) return null;
+      const prev = list[idx - 1];
+      list[idx - 1] = list[idx];
+      list[idx] = prev;
+      return list;
+    });
+  }, [reorderZone]);
+
+  // ── Z-index : mettre tout au premier plan ─────────────────────────────────
+  const bringToFront = useCallback((id) => {
+    reorderZone(id, (list, target) => {
+      const idx = list.findIndex(i => i.id === target.id);
+      if (idx === -1 || idx === list.length - 1) return null;
+      const [item] = list.splice(idx, 1);
+      list.push(item);
+      return list;
+    });
+  }, [reorderZone]);
+
+  // ── Z-index : mettre tout à l'arrière-plan ─────────────────────────────────
+  const sendToBack = useCallback((id) => {
+    reorderZone(id, (list, target) => {
+      const idx = list.findIndex(i => i.id === target.id);
+      if (idx <= 0) return null;
+      const [item] = list.splice(idx, 1);
+      list.unshift(item);
+      return list;
+    });
+  }, [reorderZone]);
 
   // ── Sélection ─────────────────────────────────────────────────────────────
   const selectItem = useCallback((id) => setSelectedId(id), []);
@@ -121,8 +202,11 @@ export function useCanvas() {
     addItem,
     updateItem,
     removeItem,
+    duplicateItem,
     bringForward,
     sendBackward,
+    bringToFront,
+    sendToBack,
     selectItem,
     clearSelection,
   };

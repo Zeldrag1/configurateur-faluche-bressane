@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ECUSSONS_VILLE } from '../../data/falucheData';
+import { ECUSSONS_VILLE } from '../../data/ecussons';
 
 /**
  * CatalogEcussons — Grille d'écussons héraldiques SVG des villes universitaires.

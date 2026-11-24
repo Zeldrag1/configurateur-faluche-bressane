@@ -46,10 +46,18 @@ body {
 /* ── Layout principal ───────────────────────────────────────────────────────── */
 .app-layout {
   display: grid;
-  grid-template-columns: 310px 1fr;
   grid-template-rows: 52px 1fr;
   height: 100vh;
   background: var(--bg-app);
+  transition: grid-template-columns 0.2s ease;
+}
+
+.app-layout.with-layers {
+  grid-template-columns: 310px 1fr 285px;
+}
+
+.app-layout.without-layers {
+  grid-template-columns: 310px 1fr;
 }
 
 .app-header {
@@ -469,6 +477,18 @@ body {
   font-weight: 600; pointer-events: none;
 }
 
+/* Couture d'assemblage entre deux filières cousues à la suite */
+.circulaire-seam {
+  position: absolute;
+  top: 0; bottom: 0; right: 0;
+  width: 4px;
+  background: rgba(0, 0, 0, 0.55);
+  border-left: 1px dashed rgba(255, 215, 0, 0.5);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+  z-index: 10;
+}
+
 /* ── Élément placé (PlacedItem) ─────────────────────────────────────────────── */
 .placed-item-inner {
   width: 100%; height: 100%;
@@ -595,3 +615,418 @@ body {
   font-family: inherit; font-size: 11px; text-align: center;
 }
 .rotation-input:focus { outline: none; border-color: var(--accent); }
+
+/* ── Bouton toggle calques dans le header ───────────────────────────────────── */
+.toggle-layers-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+.toggle-layers-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--accent);
+}
+.toggle-layers-btn.active {
+  background: rgba(108,99,255,0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Panneau droit (Calques & Plans) ────────────────────────────────────────── */
+.right-panel {
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.right-panel-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.right-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+.layers-count-badge {
+  background: rgba(108,99,255,0.2);
+  color: var(--accent);
+  border: 1px solid rgba(108,99,255,0.3);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.clear-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.clear-select-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+  background: var(--bg-card);
+}
+
+/* ── Filtres de zone ────────────────────────────────────────────────────────── */
+.layers-filters {
+  display: flex;
+  padding: 8px 12px;
+  gap: 4px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.layer-filter-btn {
+  flex: 1;
+  padding: 5px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  text-align: center;
+  white-space: nowrap;
+}
+.layer-filter-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent);
+}
+.layer-filter-btn.active {
+  background: rgba(108,99,255,0.18);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Barre d'actions d'empilement ───────────────────────────────────────────── */
+.layer-actions-bar {
+  padding: 10px 12px;
+  background: linear-gradient(135deg, rgba(108,99,255,0.12), rgba(255,107,157,0.06));
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.layer-actions-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.layer-actions-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 65%;
+}
+
+.layer-actions-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.layer-action-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 5px 3px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  min-width: 28px;
+}
+.layer-action-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.layer-action-btn .btn-hint {
+  font-size: 7.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.layer-action-btn.danger:hover {
+  background: rgba(220,20,60,0.2);
+  color: #DC143C;
+  border-color: rgba(220,20,60,0.5);
+}
+
+.layer-action-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  margin: 0 2px;
+}
+
+/* ── Liste des calques ──────────────────────────────────────────────────────── */
+.layers-list-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  min-height: 0;
+}
+
+.layers-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  color: var(--text-muted);
+  gap: 8px;
+}
+.layers-empty p {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.layers-empty span {
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.layers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.layer-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.layer-item:hover {
+  border-color: rgba(108,99,255,0.4);
+  background: var(--bg-card-hover);
+  transform: translateX(-1px);
+}
+.layer-item.selected {
+  border-color: var(--accent);
+  background: rgba(108,99,255,0.12);
+  box-shadow: 0 0 10px rgba(108,99,255,0.25);
+}
+
+.layer-item-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.layer-thumb-svg {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.layer-thumb-svg svg {
+  width: 100%;
+  height: 100%;
+}
+
+.layer-thumb-ruban {
+  width: 26px;
+  height: 12px;
+  border-radius: 2px;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  overflow: hidden;
+}
+
+.layer-thumb-text {
+  font-size: 12px;
+  font-weight: bold;
+  font-family: serif;
+}
+
+.layer-thumb-placeholder {
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.layer-item-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.layer-item-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.layer-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 8.5px;
+  color: var(--text-muted);
+}
+
+.zone-tag {
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.zone-tag-velours {
+  background: rgba(108,99,255,0.15);
+  color: var(--accent);
+  border: 1px solid rgba(108,99,255,0.3);
+}
+.zone-tag-circulaire {
+  background: rgba(255,107,157,0.15);
+  color: var(--accent-2);
+  border: 1px solid rgba(255,107,157,0.3);
+}
+
+.layer-item-rotation {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--text-secondary);
+}
+
+.layer-item-z {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.layer-item-tools {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+.layer-item:hover .layer-item-tools,
+.layer-item.selected .layer-item-tools {
+  opacity: 1;
+}
+
+.layer-tool-btn {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.layer-tool-btn:hover:not(:disabled) {
+  background: var(--bg-panel);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+.layer-tool-btn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+.layer-tool-btn.danger:hover:not(:disabled) {
+  background: rgba(220,20,60,0.2);
+  color: #DC143C;
+  border-color: rgba(220,20,60,0.3);
+}
+
+/* ── Pied du panneau ────────────────────────────────────────────────────────── */
+.right-panel-footer {
+  padding: 9px 12px;
+  border-top: 1px solid var(--border);
+  background: rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+.footer-tip {
+  font-size: 9.5px;
+  color: var(--text-muted);
+  line-height: 1.35;
+  display: block;
+}
+.footer-tip strong {
+  color: var(--text-secondary);
+}

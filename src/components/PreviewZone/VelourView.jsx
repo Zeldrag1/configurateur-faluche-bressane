@@ -129,11 +129,16 @@ export default function VelourView({
             const assoIndex = (item.type === 'ruban_asso' && item.status === 'bureau')
               ? velourBureauRibbons.findIndex(i => i.id === item.id)
               : 0;
+            const velourCityRibbons = velourItems.filter(i => i.type === 'ruban_ville');
+            const cityIndex = item.type === 'ruban_ville'
+              ? velourCityRibbons.findIndex(i => i.id === item.id)
+              : 0;
             return (
               <PlacedItem
                 key={item.id}
                 item={item}
                 assoIndex={assoIndex}
+                cityIndex={cityIndex}
                 isSelected={selectedId === item.id}
                 onSelect={onSelect}
                 onUpdate={onUpdate}

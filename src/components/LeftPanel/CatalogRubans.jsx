@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { RUBANS_ASSO, RUBANS_VILLE, STATUTS_ASSO } from '../../data/falucheData';
+import { RUBANS_ASSO, RUBANS_VILLE, STATUTS_ASSO } from '../../data/rubans';
+
+export const ROLES_VILLE = [
+  { id: 'auto', label: 'Automatique (selon l\'ordre)' },
+  { id: 'bapteme', label: 'Ville de baptême (120° gauche)' },
+  { id: 'naissance', label: 'Ville de naissance (120° droite, //)' },
+  { id: 'etudes', label: 'Ville d\'études (90° gauche)' },
+];
 
 /**
  * CatalogRubans — Liste des rubans d'association et de ville.
@@ -70,6 +77,25 @@ export default function CatalogRubans({ onAdd }) {
               </span>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Info tradition rubans de ville */}
+      {tab === 'ville' && (
+        <div style={{
+          fontSize: 10,
+          color: 'var(--text-muted)',
+          background: 'rgba(108,99,255,0.07)',
+          border: '1px solid rgba(108,99,255,0.15)',
+          borderRadius: 6,
+          padding: '8px 10px',
+          marginBottom: 10,
+          lineHeight: 1.6,
+        }}>
+          💡 <strong style={{ color: 'var(--text-secondary)' }}>Tradition des villes</strong> —
+          <br />• <strong>Baptême</strong> : part du frontal au central puis à 120° à gauche (écusson au centre).
+          <br />• <strong>Naissance</strong> : part du frontal (en parallèle) au central puis à 120° à droite (écusson sur le ruban).
+          <br />• <strong>Études</strong> : part du centre vers le bord gauche (à 90°).
         </div>
       )}
 
@@ -309,6 +335,7 @@ function CustomAssociationRibbonCreator({ onAdd }) {
 
 function CustomCityRibbonCreator({ onAdd }) {
   const [cityName, setCityName] = useState('Bourg-en-Bresse');
+  const [cityRole, setCityRole] = useState('auto');
   const [color1, setColor1] = useState('#006400');
   const [color2, setColor2] = useState('#000000');
 
@@ -319,6 +346,7 @@ function CustomCityRibbonCreator({ onAdd }) {
     type: 'ruban_ville',
     defaultWidth: 110,
     defaultHeight: 16,
+    cityRole: cityRole === 'auto' ? null : cityRole,
   });
 
   return (
@@ -354,6 +382,28 @@ function CustomCityRibbonCreator({ onAdd }) {
             fontFamily: 'inherit',
           }}
         />
+      </div>
+
+      {/* Rôle du ruban de ville */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <label style={{ fontSize: 9, color: 'var(--text-muted)' }}>Rôle du ruban</label>
+        <select
+          value={cityRole}
+          onChange={(e) => setCityRole(e.target.value)}
+          style={{
+            fontSize: 11,
+            padding: '6px 10px',
+            background: 'var(--bg-app)',
+            border: '1px solid var(--border)',
+            borderRadius: 4,
+            color: 'var(--text-primary)',
+            fontFamily: 'inherit',
+          }}
+        >
+          {ROLES_VILLE.map(r => (
+            <option key={r.id} value={r.id}>{r.label}</option>
+          ))}
+        </select>
       </div>
 
       {/* Couleurs */}
@@ -425,6 +475,7 @@ function CustomCityRibbonCreator({ onAdd }) {
 function RubanRow({ ruban, type, showStatus, onAdd }) {
   const [showBtns, setShowBtns] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('actif');
+  const [selectedRole, setSelectedRole] = useState('auto');
 
   const defaultW = type === 'ruban_asso' ? 130 : 110;
   const defaultH = type === 'ruban_asso' ? 20 : 16;
@@ -439,6 +490,7 @@ function RubanRow({ ruban, type, showStatus, onAdd }) {
     status: showStatus ? selectedStatus : null,
     statusBorderColor: showStatus ? (currentStatut?.borderColor ?? null) : null,
     statusIcon: showStatus ? (currentStatut?.icon ?? null) : null,
+    cityRole: type === 'ruban_ville' ? (selectedRole === 'auto' ? null : selectedRole) : null,
   });
 
   return (
@@ -515,17 +567,42 @@ function RubanRow({ ruban, type, showStatus, onAdd }) {
         </div>
       )}
 
-      {/* Boutons ville (sans statut) */}
+      {/* Boutons ville (avec choix du rôle de la ville) */}
       {!showStatus && showBtns && (
-        <div className="add-zone-btns" style={{ flexShrink: 0, alignSelf: 'flex-end' }}>
-          <button
-            className="add-zone-btn add-zone-btn-v"
-            onClick={() => onAdd(buildItemData(), 'velours')}
-            title="Ajouter sur le velours"
-            style={{ width: 'auto', padding: '3px 8px', fontSize: 9 }}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%' }}>
+          <select
+            value={selectedRole}
+            onChange={(e) => setSelectedRole(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              flex: 1,
+              fontSize: 9,
+              padding: '3px 6px',
+              background: 'var(--bg-app)',
+              border: '1px solid var(--border)',
+              borderRadius: 4,
+              color: 'var(--text-secondary)',
+              fontFamily: 'inherit',
+              cursor: 'pointer',
+            }}
           >
-            Ajouter
-          </button>
+            {ROLES_VILLE.map(r => (
+              <option key={r.id} value={r.id} style={{ background: 'var(--bg-card)' }}>
+                {r.label}
+              </option>
+            ))}
+          </select>
+
+          <div className="add-zone-btns" style={{ flexShrink: 0 }}>
+            <button
+              className="add-zone-btn add-zone-btn-v"
+              onClick={() => onAdd(buildItemData(), 'velours')}
+              title="Ajouter sur le velours"
+              style={{ width: 'auto', padding: '3px 8px', fontSize: 9 }}
+            >
+              Ajouter
+            </button>
+          </div>
         </div>
       )}
     </div>

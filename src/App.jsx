@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useCanvas } from './hooks/useCanvas';
-import { FILIERES } from './data/falucheData';
+import { FILIERES } from './data/filieres';
+import { Layers } from 'lucide-react';
 
 import FiliereSelector from './components/LeftPanel/FiliereSelector';
 import CatalogInsignes from './components/LeftPanel/CatalogInsignes';
@@ -8,13 +9,14 @@ import CatalogRubans from './components/LeftPanel/CatalogRubans';
 import CatalogEcussons from './components/LeftPanel/CatalogEcussons';
 import VelourView from './components/PreviewZone/VelourView';
 import CirView from './components/PreviewZone/CirView';
+import LayersPanel from './components/RightPanel/LayersPanel';
 
 const FalucheIcon = () => (
   <svg width="28" height="28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
     <circle cx="50" cy="50" r="46" fill="#111" stroke="#6c63ff" strokeWidth="4"/>
     <circle cx="50" cy="50" r="30" fill="#1a1a1a"/>
     <rect x="20" y="74" width="60" height="12" rx="6" fill="#6c63ff" opacity="0.8"/>
-    <circle cx="50" cy="50" r="8" fill="#FFD700"/>
+    <circle cx="50" cy="8" fill="#FFD700"/>
   </svg>
 );
 
@@ -24,12 +26,11 @@ const CATALOG_TABS = [
   { id: 'ecussons', label: '🛡 Écussons' },
 ];
 
-// ── Rotation snap : valeurs rapides ───────────────────────────────────────────
-const ROTATION_SNAPS = [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330];
-
 export default function App() {
   const [filiereId, setFiliereId] = useState('');
+  const [secondaryFilieres, setSecondaryFilieres] = useState([]);
   const [catalogTab, setCatalogTab] = useState('insignes');
+  const [showLayersPanel, setShowLayersPanel] = useState(true);
 
   const {
     items,
@@ -37,8 +38,11 @@ export default function App() {
     addItem,
     updateItem,
     removeItem,
+    duplicateItem,
     bringForward,
     sendBackward,
+    bringToFront,
+    sendToBack,
     selectItem,
     clearSelection,
   } = useCanvas();
@@ -48,33 +52,115 @@ export default function App() {
 
   const handleAdd = (itemData, zone) => addItem(itemData, zone);
 
+  // ── Ajout / Gestion des filières secondaires ────────────────────────────────
+  const addSecondaryFiliere = () => {
+    setSecondaryFilieres(prev => [
+      ...prev,
+      {
+        id: `sec-${Date.now()}`,
+        filiereId: '',
+        mode: 'segment', // 'segment' (à la suite) ou 'overlay' (ruban superposé)
+      }
+    ]);
+  };
+
+  const updateSecondaryFiliere = (id, patch) => {
+    setSecondaryFilieres(prev => prev.map(s => s.id === id ? { ...s, ...patch } : s));
+  };
+
+  const removeSecondaryFiliere = (id) => {
+    setSecondaryFilieres(prev => prev.filter(s => s.id !== id));
+  };
+
+  // Poser un ruban de filière superposé sur le circulaire
+  const handleAddRibbonOverlay = (filiere) => {
+    addItem({
+      type: 'ruban_filiere',
+      label: `Ruban Filière — ${filiere.label}`,
+      filiereName: filiere.label,
+      color: filiere.color,
+      texture: filiere.texture,
+      defaultWidth: 260,
+      defaultHeight: 38,
+    }, 'circulaire');
+  };
+
+  // ── Segments de fond du circulaire (filière principale + secondaires à la suite) ──
+  const segments = useMemo(() => {
+    const list = [];
+    if (selectedFiliere) {
+      list.push({
+        id: selectedFiliere.id,
+        label: selectedFiliere.label,
+        color: selectedFiliere.color,
+        texture: selectedFiliere.texture,
+      });
+    }
+    // Filières secondaires en mode segment
+    secondaryFilieres.forEach(sec => {
+      if (sec.filiereId && (sec.mode || 'segment') === 'segment') {
+        const found = FILIERES.find(f => f.id === sec.filiereId);
+        if (found) {
+          list.push({
+            id: found.id,
+            label: found.label,
+            color: found.color,
+            texture: found.texture,
+          });
+        }
+      }
+    });
+    return list;
+  }, [selectedFiliere, secondaryFilieres]);
+
   // ── Raccourcis rotation ─────────────────────────────────────────────────────
   const setRotation = (deg) => {
     if (selectedId) updateItem(selectedId, { rotation: deg });
   };
 
   return (
-    <div className="app-layout">
+    <div className={`app-layout ${showLayersPanel ? 'with-layers' : 'without-layers'}`}>
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <header className="app-header">
         <FalucheIcon />
         <h1>Configurateur de Faluche</h1>
         <span className="subtitle">Tradition Bressane</span>
+
         {selectedItem && (
-          <div style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ marginLeft: 20, fontSize: 11, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', display: 'block' }} />
             <em style={{ color: 'var(--text-secondary)' }}>{selectedItem.label}</em>
             &nbsp;sélectionné —&nbsp;
             <kbd style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 3, padding: '1px 5px', fontSize: 10, color: 'var(--text-secondary)' }}>Suppr</kbd>
           </div>
         )}
+
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            className={`toggle-layers-btn ${showLayersPanel ? 'active' : ''}`}
+            onClick={() => setShowLayersPanel(prev => !prev)}
+            title="Afficher/masquer la liste des calques"
+          >
+            <Layers size={14} />
+            <span>Calques ({items.length})</span>
+          </button>
+        </div>
       </header>
 
       {/* ── Panneau gauche ──────────────────────────────────────────────── */}
       <aside className="left-panel">
 
-        {/* ─ Sélecteur filière ─────────────────────────────────────────── */}
-        <FiliereSelector filiereId={filiereId} onChange={setFiliereId} />
+        {/* ─ Sélecteur filières (principale et secondaires) ────────────── */}
+        <FiliereSelector
+          primaryFiliereId={filiereId}
+          onPrimaryChange={setFiliereId}
+          secondaryFilieres={secondaryFilieres}
+          onAddSecondary={addSecondaryFiliere}
+          onUpdateSecondary={updateSecondaryFiliere}
+          onRemoveSecondary={removeSecondaryFiliere}
+          onAddEmbleme={(insigne) => handleAdd({ ...insigne, type: 'insigne' }, 'circulaire')}
+          onAddRibbonOverlay={handleAddRibbonOverlay}
+        />
 
         {/* ─ Panneau de propriétés (visible si élément sélectionné) ─────── */}
         {selectedItem && (
@@ -166,7 +252,7 @@ export default function App() {
         </div>
       </aside>
 
-      {/* ── Zone de prévisualisation droite ─────────────────────────────── */}
+      {/* ── Zone de prévisualisation centrale ───────────────────────────── */}
       <main className="preview-zone">
         {/* Velours */}
         <div className="preview-panel preview-panel-velours">
@@ -199,8 +285,8 @@ export default function App() {
                 <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: 'var(--text-muted)' }}>
                   <span style={{ width: 10, height: 10, borderRadius: '50%', background: selectedFiliere.color, border: '1px solid rgba(255,255,255,0.2)', display: 'inline-block' }} />
                   {selectedFiliere.label}
-                  {selectedFiliere.texture && (
-                    <span style={{ fontSize: 9, opacity: 0.6, fontStyle: 'italic' }}>· {selectedFiliere.texture}</span>
+                  {segments.length > 1 && (
+                    <span style={{ color: 'var(--accent)', fontWeight: 600 }}> (+{segments.length - 1})</span>
                   )}
                 </span>
               )}
@@ -215,6 +301,7 @@ export default function App() {
               filiereColor={selectedFiliere?.color ?? '#1a1a1a'}
               filiereName={selectedFiliere?.label ?? ''}
               filiereTexture={selectedFiliere?.texture ?? 'velours'}
+              segments={segments}
               selectedId={selectedId}
               onSelect={selectItem}
               onUpdate={updateItem}
@@ -226,6 +313,22 @@ export default function App() {
           </div>
         </div>
       </main>
+
+      {/* ── Panneau droit des calques ──────────────────────────────────── */}
+      {showLayersPanel && (
+        <LayersPanel
+          items={items}
+          selectedId={selectedId}
+          onSelect={selectItem}
+          onClearSelection={clearSelection}
+          onRemove={removeItem}
+          onDuplicate={duplicateItem}
+          onBringForward={bringForward}
+          onSendBackward={sendBackward}
+          onBringToFront={bringToFront}
+          onSendToBack={sendToBack}
+        />
+      )}
     </div>
   );
 }

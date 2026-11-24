@@ -19,6 +19,7 @@ import CityRibbon from './CityRibbon';
 export default function PlacedItem({
   item,
   assoIndex,
+  cityIndex = 0,
   isSelected,
   onSelect,
   onUpdate,
@@ -162,9 +163,58 @@ export default function PlacedItem({
           <AssociationRibbon status={item.status} colors={item.colors} index={assoIndex} pattern={item.pattern} />
         )}
 
-        {/* Ruban de ville sur le velours (forme en V) */}
+        {/* Ruban de ville sur le velours (baptême 120° gauche, naissance // 120° droite, études 90° gauche) */}
         {isVeloursCity && (
-          <CityRibbon colors={item.colors} />
+          <CityRibbon
+            colors={item.colors}
+            cityIndex={
+              item.cityRole === 'naissance'
+                ? 1
+                : item.cityRole === 'etudes'
+                ? (item.etudesIndex !== undefined ? 2 + item.etudesIndex : (cityIndex >= 2 ? cityIndex : 2))
+                : item.cityRole === 'bapteme'
+                ? 0
+                : cityIndex
+            }
+          />
+        )}
+
+        {/* Ruban de filière secondaire sur le circulaire */}
+        {item.type === 'ruban_filiere' && (
+          <div
+            className="placed-ruban-filiere"
+            style={{
+              width: '100%',
+              height: '100%',
+              background: item.color,
+              borderRadius: 4,
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2)',
+              border: '1px solid rgba(255,255,255,0.2)',
+            }}
+          >
+            {item.texture === 'satin' ? (
+              <div className="circulaire-texture-satin" />
+            ) : (
+              <div className="circulaire-texture-velours" />
+            )}
+            <div className="circulaire-highlight" />
+            <div style={{
+              position: 'absolute',
+              bottom: 2,
+              right: 6,
+              fontSize: 8,
+              color: 'rgba(255,255,255,0.45)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              fontWeight: 600,
+              pointerEvents: 'none',
+              textShadow: '0 1px 2px rgba(0,0,0,0.8)',
+            }}>
+              {item.filiereName || item.label}
+            </div>
+          </div>
         )}
 
         {/* Ruban bicolore standard */}

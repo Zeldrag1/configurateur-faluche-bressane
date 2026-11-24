@@ -3,7 +3,7 @@ import PlacedItem from './PlacedItem';
 
 /**
  * CirView — Vue du circulaire (ruban de filière déplié à plat).
- * Simple bande horizontale dont la couleur change selon la filière.
+ * Supporte le mode mono-filière et multi-filières segmenté (côte à côte à la suite).
  *
  * Utilise un ResizeObserver pour connaître ses dimensions exactes
  * et les passer à PlacedItem pour la conversion % ↔ px.
@@ -13,6 +13,7 @@ export default function CirView({
   filiereColor,
   filiereName,
   filiereTexture,
+  segments = [],
   selectedId,
   onSelect,
   onUpdate,
@@ -38,27 +39,63 @@ export default function CirView({
   }, []);
 
   const cirItems = items.filter(i => i.zone === 'circulaire');
-  const isSatin = filiereTexture === 'satin';
+
+  // Segments actifs : soit la liste multi-filières transmise, soit la filière principale unique
+  const activeSegments = segments.length > 0
+    ? segments
+    : [{
+        color: filiereColor || '#1a1a1a',
+        label: filiereName || 'Filière non choisie',
+        texture: filiereTexture || 'velours',
+      }];
 
   return (
     <div className="circulaire-container" onClick={onClearSelection}>
       <div
         ref={rectRef}
         className="circulaire-rect"
-        style={{ background: filiereColor, position: 'relative' }}
+        style={{ position: 'relative', overflow: 'visible' }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Texture — velours (stries verticales) ou satin (reflet diagonal) */}
-        {isSatin ? (
-          <div className="circulaire-texture-satin" />
-        ) : (
-          <div className="circulaire-texture-velours" />
-        )}
+        {/* ── Segments de fond de filière (côte à côte / chacun sa place) ── */}
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', pointerEvents: 'none', borderRadius: 6, overflow: 'hidden', zIndex: 1 }}>
+          {activeSegments.map((seg, idx) => {
+            const isSatin = seg.texture === 'satin';
+            return (
+              <div
+                key={idx}
+                style={{
+                  flex: 1,
+                  background: seg.color,
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+              >
+                {/* Texture — velours (stries) ou satin (reflets diagonaux) */}
+                {isSatin ? (
+                  <div className="circulaire-texture-satin" />
+                ) : (
+                  <div className="circulaire-texture-velours" />
+                )}
 
-        {/* Reflet haut */}
-        <div className="circulaire-highlight" />
+                {/* Reflet de brillance haut */}
+                <div className="circulaire-highlight" />
 
-        {/* Zone de dépôt */}
+                {/* Couture séparatrice réaliste entre deux filières cousues à la suite */}
+                {idx < activeSegments.length - 1 && (
+                  <div className="circulaire-seam" />
+                )}
+
+                {/* Label filière au bas du segment */}
+                <div className="circulaire-label" style={{ right: 8, bottom: 4 }}>
+                  {seg.label}{seg.texture ? ` · ${seg.texture}` : ''}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ── Zone de dépôt ────────────────────────────────────────────── */}
         {cirItems.length === 0 && (
           <div className="drop-hint" style={{ fontSize: 10 }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.5">
@@ -68,6 +105,7 @@ export default function CirView({
           </div>
         )}
 
+        {/* ── Éléments placés (insignes, rubans, etc.) ─────────────────── */}
         {cirItems.map(item => (
           <PlacedItem
             key={item.id}
@@ -82,11 +120,6 @@ export default function CirView({
             containerH={containerSize.h}
           />
         ))}
-
-        {/* Label filière */}
-        <div className="circulaire-label">
-          {filiereName || 'Filière non choisie'}{filiereTexture ? ` · ${filiereTexture}` : ''}
-        </div>
       </div>
     </div>
   );

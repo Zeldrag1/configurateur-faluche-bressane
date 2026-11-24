@@ -1,52 +1,22 @@
 /**
- * falucheData.js — Source de vérité du Configurateur de Faluche Bressane
+ * insignes.js — Insignes vectoriels SVG par catégorie
  *
- * Contient toutes les filières (Velours & Satins), le cursus (bacs, étoiles, palmes),
- * les rubans associatifs/officiels et les insignes régionaux et libres.
+ * Contient les emblèmes de discipline, distinctions & cursus,
+ * baccalauréats & lettres, et insignes régionaux / libres.
  */
 
 // ─────────────────────────────────────────────────────────────────────────────
-// FILIÈRES (Couleurs du Circulaire et Emblèmes)
+// CATÉGORIES D'INSIGNES
 // ─────────────────────────────────────────────────────────────────────────────
-export const FILIERES = [
-  // --- Les Velours ---
-  { id: 'dentaire', label: 'Chirurgie Dentaire (Velours)', color: '#800080', texture: 'velours', embleme: 'Molaire' },
-  { id: 'courte_sante', label: 'Étude courte de santé (Velours)', color: '#FFFFFF', texture: 'velours', embleme: 'Initiales / Rattachement' },
-  { id: 'medecine', label: 'Médecine (Velours)', color: '#8B0000', texture: 'velours', embleme: 'Caducée médecine' },
-  { id: 'osteopathie', label: 'Ostéopathie (Velours)', color: '#4169E1', texture: 'velours', embleme: 'Sphénoïde' },
-  { id: 'paramedical', label: 'Paramédical (Velours)', color: '#FF69B4', texture: 'velours', embleme: 'Ciseaux + Lettres / Caducée' },
-  { id: 'pharmacie', label: 'Pharmacie (Velours)', color: '#006400', texture: 'velours', embleme: 'Caducée sur coupe' },
-  { id: 'prepa_sante', label: 'Prépa santé PASS/LASS (Velours)', color: '#5C2E00', texture: 'velours', embleme: 'Tête de mort sur fémurs' },
-  { id: 'sage_femme', label: 'Sage-femme (Velours)', color: '#FF1493', texture: 'velours', embleme: 'Ânkh' },
-  { id: 'veterinaire', label: 'Vétérinaire (Velours)', color: '#800020', texture: 'velours', embleme: 'Tête de cheval' },
-
-  // --- Les Satins ---
-  { id: 'aes', label: 'AES (Satin)', color: '#90EE90', texture: 'satin', embleme: 'Lettres AES' },
-  { id: 'arts', label: 'Arts (Beaux-Arts, Archi, Cinéma...) (Satin)', color: '#0000FF', texture: 'satin', embleme: 'Équerre/Compas/Clap/Lyre' },
-  { id: 'bts', label: 'BTS (Satin)', color: '#FFFFFF', texture: 'satin', embleme: 'Lettres BTS' },
-  { id: 'prepas', label: 'Classes préparatoires (Satin)', color: '#8B4513', texture: 'satin', embleme: 'Épi de Blé / Tête de Cheval / Chouette' },
-  { id: 'droit', label: 'Droit (Satin)', color: '#DC143C', texture: 'satin', embleme: 'Glaive et Balance' },
-  { id: 'commerce', label: 'Écoles de Commerce (Satin)', color: 'linear-gradient(to bottom, #DC143C 50%, #228B22 50%)', texture: 'satin', embleme: 'Caducée Mercure' },
-  { id: 'ingenieurs', label: 'Écoles d\'ingénieurs (Satin)', color: 'linear-gradient(to bottom, #4169E1 50%, #000000 50%)', texture: 'satin', embleme: 'Étoile et Foudre' },
-  { id: 'iut', label: 'IUT (Satin)', color: '#E8E0CC', texture: 'satin', embleme: 'Marteau et Maillet + IUT' },
-  { id: 'lettres', label: 'Lettres & Sciences humaines (Satin)', color: '#FFD700', texture: 'satin', embleme: 'Squelette/Globe/Casque/Nounours' },
-  { id: 'sciences', label: 'Sciences (Satin)', color: '#8B008B', texture: 'satin', embleme: 'Palmes croisées' },
-  { id: 'eco_gestion', label: 'Sciences économiques & Gestion (IAE) (Satin)', color: '#FF8C00', texture: 'satin', embleme: 'Caducée Mercure / IAE' },
-  { id: 'sciences_po', label: 'Sciences Politiques (Satin)', color: 'linear-gradient(to bottom, #003DA5 50%, #DC143C 50%)', texture: 'satin', embleme: 'Parapluie' },
-  { id: 'staps', label: 'STAPS (Satin)', color: '#004d00', texture: 'satin', embleme: 'Coq' }
+export const INSIGNE_CATEGORIES = [
+  { id: 'emblemes',     label: 'Emblèmes de discipline' },
+  { id: 'libres',       label: 'Insignes libres & Régions' },
+  { id: 'distinctions', label: 'Distinctions & Cursus' },
+  { id: 'lettres',      label: 'Baccalauréats & Lettres' }
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// STATUTS D'ASSOCIATION
-// ─────────────────────────────────────────────────────────────────────────────
-export const STATUTS_ASSO = [
-  { id: 'actif',     label: 'Membre Actif',     borderColor: null,      icon: null },
-  { id: 'bureau',    label: 'Membre du Bureau', borderColor: '#FFD700', icon: '★' },
-  { id: 'president', label: 'Président',        borderColor: '#DC143C', icon: '♛' },
-];
-
-// ─────────────────────────────────────────────────────────────────────────────
-// INSIGNES — SVG inline par catégorie
+// CATALOGUE DES INSIGNES
 // ─────────────────────────────────────────────────────────────────────────────
 export const INSIGNES = [
   // ── Emblèmes de discipline ──
@@ -92,7 +62,7 @@ export const INSIGNES = [
   },
   {
     id: 'ciseaux',
-    label: 'Ciseaux (Paramédical)',
+    label: 'Ciseaux (Paramédical / Mode)',
     category: 'emblemes',
     defaultWidth: 45,
     defaultHeight: 55,
@@ -104,6 +74,20 @@ export const INSIGNES = [
         <line x1="50" y1="68" x2="35" y2="15"/>
       </g>
       <circle cx="40" cy="50" r="4" fill="#FFD700"/>
+    </svg>`
+  },
+  {
+    id: 'caducee_infirmier',
+    label: 'Caducée Infirmier',
+    category: 'emblemes',
+    defaultWidth: 48,
+    defaultHeight: 65,
+    svg: `<svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
+      <path d="M40,25 Q50,5 60,25 Q55,40 50,45 Q45,40 40,25 Z" fill="#FF4500" stroke="#B8860B" stroke-width="2"/>
+      <line x1="50" y1="45" x2="50" y2="120" stroke="#C0C0C0" stroke-width="4" stroke-linecap="round"/>
+      <path d="M36,55 Q50,75 64,55" fill="none" stroke="#228B22" stroke-width="4" stroke-linecap="round"/>
+      <path d="M36,80 Q50,100 64,80" fill="none" stroke="#228B22" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="50" cy="122" r="5" fill="#C0C0C0"/>
     </svg>`
   },
   {
@@ -151,7 +135,7 @@ export const INSIGNES = [
   },
   {
     id: 'tete_cheval',
-    label: 'Tête de cheval (Vétérinaire)',
+    label: 'Tête de cheval (Vétérinaire / BCPST)',
     category: 'emblemes',
     defaultWidth: 50,
     defaultHeight: 50,
@@ -164,7 +148,7 @@ export const INSIGNES = [
   },
   {
     id: 'equerre_compas',
-    label: 'Équerre & Compas (Archi)',
+    label: 'Équerre & Compas (Architecture)',
     category: 'emblemes',
     defaultWidth: 55,
     defaultHeight: 55,
@@ -176,7 +160,7 @@ export const INSIGNES = [
   },
   {
     id: 'clap_cinema',
-    label: 'Clap Cinéma',
+    label: 'Clap Cinéma (Audiovisuel)',
     category: 'emblemes',
     defaultWidth: 55,
     defaultHeight: 50,
@@ -189,7 +173,7 @@ export const INSIGNES = [
   },
   {
     id: 'glaive_balance',
-    label: 'Glaive & Balance (Droit)',
+    label: 'Glaive & Balance (Droit / Notariat)',
     category: 'emblemes',
     defaultWidth: 60,
     defaultHeight: 65,
@@ -209,7 +193,7 @@ export const INSIGNES = [
   },
   {
     id: 'caducee_mercure',
-    label: 'Caducée Mercure',
+    label: 'Caducée Mercure (Commerce / Eco / Kiné)',
     category: 'emblemes',
     defaultWidth: 50,
     defaultHeight: 65,
@@ -254,6 +238,213 @@ export const INSIGNES = [
       <path d="M10,60 Q50,10 90,60 Z" fill="#4682B4" stroke="#2a4d6c" stroke-width="3"/>
       <line x1="50" y1="40" x2="50" y2="105" stroke="#C0C0C0" stroke-width="4" stroke-linecap="round"/>
       <path d="M50,105 Q55,115 62,110" fill="none" stroke="#C0C0C0" stroke-width="4" stroke-linecap="round"/>
+    </svg>`
+  },
+  {
+    id: 'coq_staps',
+    label: 'Coq (STAPS)',
+    category: 'emblemes',
+    defaultWidth: 52,
+    defaultHeight: 55,
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M35,65 Q20,55 25,40 Q40,35 50,45 Q65,30 80,45 Q75,70 55,75 Q40,80 35,65 Z" fill="#2E7D32" stroke="#1B5E20" stroke-width="2"/>
+      <path d="M55,30 C52,22 60,18 64,24 C68,18 76,20 74,28" fill="#DC143C"/>
+      <polygon points="76,32 86,35 76,40" fill="#FFD700"/>
+      <circle cx="68" cy="30" r="3" fill="#111"/>
+      <line x1="45" y1="75" x2="40" y2="92" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+      <line x1="55" y1="75" x2="60" y2="92" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+    </svg>`
+  },
+  {
+    id: 'lyre',
+    label: 'Lyre (Musicologie / Musique)',
+    category: 'emblemes',
+    defaultWidth: 50,
+    defaultHeight: 55,
+    svg: `<svg viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+      <path d="M25,25 Q15,65 35,85 Q50,95 65,85 Q85,65 75,25" fill="none" stroke="#FFD700" stroke-width="6" stroke-linecap="round"/>
+      <line x1="20" y1="25" x2="80" y2="25" stroke="#FFD700" stroke-width="5" stroke-linecap="round"/>
+      <line x1="38" y1="25" x2="38" y2="80" stroke="#FFD700" stroke-width="2"/>
+      <line x1="50" y1="25" x2="50" y2="85" stroke="#FFD700" stroke-width="2"/>
+      <line x1="62" y1="25" x2="62" y2="80" stroke="#FFD700" stroke-width="2"/>
+      <circle cx="50" cy="95" r="7" fill="#FFD700"/>
+    </svg>`
+  },
+  {
+    id: 'palette_pinceau',
+    label: 'Palette & Pinceau (Beaux-Arts / Hist. Art)',
+    category: 'emblemes',
+    defaultWidth: 52,
+    defaultHeight: 52,
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20,50 C20,25 45,15 70,25 C85,35 85,60 75,75 C68,85 55,80 50,70 C45,60 30,75 20,50 Z" fill="#D2B48C" stroke="#8B5A2B" stroke-width="3"/>
+      <circle cx="35" cy="35" r="5" fill="#DC143C"/>
+      <circle cx="55" cy="30" r="5" fill="#4169E1"/>
+      <circle cx="70" cy="45" r="5" fill="#FFD700"/>
+      <circle cx="65" cy="62" r="5" fill="#228B22"/>
+      <circle cx="35" cy="62" r="6" fill="#1a1a2e"/>
+      <line x1="15" y1="85" x2="85" y2="15" stroke="#8B4513" stroke-width="4" stroke-linecap="round"/>
+      <polygon points="85,15 92,8 88,22" fill="#C0C0C0"/>
+    </svg>`
+  },
+  {
+    id: 'globe',
+    label: 'Globe (Géographie)',
+    category: 'emblemes',
+    defaultWidth: 50,
+    defaultHeight: 55,
+    svg: `<svg viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="45" r="30" fill="#4682B4" stroke="#FFD700" stroke-width="3"/>
+      <ellipse cx="50" cy="45" rx="14" ry="30" fill="none" stroke="#FFD700" stroke-width="2"/>
+      <line x1="20" y1="45" x2="80" y2="45" stroke="#FFD700" stroke-width="2"/>
+      <path d="M50,10 Q85,10 85,45 Q85,80 50,80" fill="none" stroke="#C0C0C0" stroke-width="4" stroke-linecap="round"/>
+      <line x1="50" y1="80" x2="50" y2="100" stroke="#C0C0C0" stroke-width="5"/>
+      <line x1="30" y1="100" x2="70" y2="100" stroke="#C0C0C0" stroke-width="5" stroke-linecap="round"/>
+    </svg>`
+  },
+  {
+    id: 'casque_pericles',
+    label: 'Casque de Périclès (Histoire)',
+    category: 'emblemes',
+    defaultWidth: 52,
+    defaultHeight: 55,
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M25,25 Q50,5 75,25 Q65,45 60,65 L40,65 Q35,45 25,25 Z" fill="#CD7F32" stroke="#8B4513" stroke-width="3"/>
+      <path d="M48,5 Q50,0 52,5 L55,40 L45,40 Z" fill="#DC143C"/>
+      <rect x="42" y="45" width="16" height="30" rx="3" fill="#CD7F32" stroke="#8B4513" stroke-width="2"/>
+      <polygon points="35,45 42,60 30,55" fill="#CD7F32"/>
+      <polygon points="65,45 58,60 70,55" fill="#CD7F32"/>
+    </svg>`
+  },
+  {
+    id: 'livre_plume',
+    label: 'Livre ouvert & Plume (Lettres & Langues)',
+    category: 'emblemes',
+    defaultWidth: 54,
+    defaultHeight: 50,
+    svg: `<svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15,65 Q32,55 50,65 Q68,55 85,65 L85,30 Q68,20 50,30 Q32,20 15,30 Z" fill="#FFF8DC" stroke="#8B4513" stroke-width="2.5"/>
+      <line x1="50" y1="30" x2="50" y2="65" stroke="#8B4513" stroke-width="2.5"/>
+      <path d="M60,60 Q75,35 70,12 Q65,22 55,28" fill="#FFD700" stroke="#B8860B" stroke-width="1.5"/>
+    </svg>`
+  },
+  {
+    id: 'nounours',
+    label: 'Nounours (Sciences de l\'éducation)',
+    category: 'emblemes',
+    defaultWidth: 50,
+    defaultHeight: 52,
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="30" cy="25" r="10" fill="#C4913A"/>
+      <circle cx="70" cy="25" r="10" fill="#C4913A"/>
+      <circle cx="50" cy="40" r="24" fill="#C4913A" stroke="#8b6527" stroke-width="2"/>
+      <circle cx="42" cy="35" r="3" fill="#111"/>
+      <circle cx="58" cy="35" r="3" fill="#111"/>
+      <ellipse cx="50" cy="45" rx="8" ry="6" fill="#e0cda9"/>
+      <circle cx="50" cy="43" r="3" fill="#111"/>
+      <circle cx="50" cy="72" r="22" fill="#C4913A" stroke="#8b6527" stroke-width="2"/>
+    </svg>`
+  },
+  {
+    id: 'grenouille',
+    label: 'Grenouille (Sociologie)',
+    category: 'emblemes',
+    defaultWidth: 50,
+    defaultHeight: 50,
+    svg: `<svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="55" rx="28" ry="22" fill="#4CAF50" stroke="#2E7D32" stroke-width="3"/>
+      <circle cx="35" cy="35" r="11" fill="#4CAF50" stroke="#2E7D32" stroke-width="2.5"/>
+      <circle cx="65" cy="35" r="11" fill="#4CAF50" stroke="#2E7D32" stroke-width="2.5"/>
+      <circle cx="35" cy="35" r="5" fill="#111"/>
+      <circle cx="65" cy="35" r="5" fill="#111"/>
+      <path d="M38,62 Q50,70 62,62" fill="none" stroke="#1B5E20" stroke-width="3" stroke-linecap="round"/>
+    </svg>`
+  },
+  {
+    id: 'squelette',
+    label: 'Squelette (Anthropologie)',
+    category: 'emblemes',
+    defaultWidth: 45,
+    defaultHeight: 65,
+    svg: `<svg viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="40" cy="20" r="12" fill="#F5F5F5" stroke="#999" stroke-width="2"/>
+      <circle cx="36" cy="18" r="2.5" fill="#111"/>
+      <circle cx="44" cy="18" r="2.5" fill="#111"/>
+      <line x1="40" y1="32" x2="40" y2="70" stroke="#F5F5F5" stroke-width="4"/>
+      <line x1="25" y1="42" x2="55" y2="42" stroke="#F5F5F5" stroke-width="3"/>
+      <line x1="28" y1="52" x2="52" y2="52" stroke="#F5F5F5" stroke-width="3"/>
+      <line x1="30" y1="62" x2="50" y2="62" stroke="#F5F5F5" stroke-width="3"/>
+      <line x1="40" y1="70" x2="28" y2="105" stroke="#F5F5F5" stroke-width="3.5"/>
+      <line x1="40" y1="70" x2="52" y2="105" stroke="#F5F5F5" stroke-width="3.5"/>
+    </svg>`
+  },
+  {
+    id: 'sphinx',
+    label: 'Sphinx (Archéologie)',
+    category: 'emblemes',
+    defaultWidth: 55,
+    defaultHeight: 50,
+    svg: `<svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20,75 L80,75 L75,55 Q50,45 40,55 Z" fill="#D2B48C" stroke="#8B5A2B" stroke-width="2.5"/>
+      <circle cx="35" cy="35" r="14" fill="#D2B48C" stroke="#8B5A2B" stroke-width="2"/>
+      <polygon points="25,28 45,28 35,12" fill="#FFD700" stroke="#B8860B" stroke-width="1.5"/>
+      <circle cx="33" cy="33" r="2" fill="#111"/>
+    </svg>`
+  },
+  {
+    id: 'masques_theatre',
+    label: 'Masques de Comédie (Théâtre / Arts Spectacle)',
+    category: 'emblemes',
+    defaultWidth: 55,
+    defaultHeight: 50,
+    svg: `<svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15,25 Q35,15 45,35 Q40,65 25,65 Q10,65 15,25 Z" fill="#FFD700" stroke="#B8860B" stroke-width="2"/>
+      <circle cx="25" cy="35" r="3" fill="#111"/>
+      <circle cx="37" cy="35" r="3" fill="#111"/>
+      <path d="M25,50 Q31,58 37,50" fill="none" stroke="#111" stroke-width="2.5"/>
+      <path d="M55,35 Q75,25 85,45 Q80,75 65,75 Q50,75 55,35 Z" fill="#C0C0C0" stroke="#777" stroke-width="2"/>
+      <circle cx="65" cy="45" r="3" fill="#111"/>
+      <circle cx="77" cy="45" r="3" fill="#111"/>
+      <path d="M65,62 Q71,54 77,62" fill="none" stroke="#111" stroke-width="2.5"/>
+    </svg>`
+  },
+  {
+    id: 'chouette_bicephale',
+    label: 'Chouette bicéphale (Hypokhâgne / Khâgne)',
+    category: 'emblemes',
+    defaultWidth: 54,
+    defaultHeight: 52,
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="62" rx="26" ry="24" fill="#8B4513" stroke="#5c3a1a" stroke-width="2.5"/>
+      <circle cx="38" cy="35" r="14" fill="#8B4513" stroke="#5c3a1a" stroke-width="2"/>
+      <circle cx="62" cy="35" r="14" fill="#8B4513" stroke="#5c3a1a" stroke-width="2"/>
+      <circle cx="38" cy="35" r="6" fill="#FFD700"/>
+      <circle cx="62" cy="35" r="6" fill="#FFD700"/>
+      <circle cx="38" cy="35" r="2.5" fill="#111"/>
+      <circle cx="62" cy="35" r="2.5" fill="#111"/>
+      <polygon points="47,40 50,48 53,40" fill="#FFD700"/>
+    </svg>`
+  },
+  {
+    id: 'at_numerique',
+    label: '@ (Arts numériques)',
+    category: 'emblemes',
+    defaultWidth: 48,
+    defaultHeight: 48,
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="45" fill="#1a1a2e" stroke="#4169E1" stroke-width="3"/>
+      <text x="50" y="68" text-anchor="middle" font-size="56" font-weight="bold" fill="#00D2FF" font-family="sans-serif">@</text>
+    </svg>`
+  },
+  {
+    id: 'lettre_phi',
+    label: 'Lettre Phi (Philosophie)',
+    category: 'emblemes',
+    defaultWidth: 45,
+    defaultHeight: 45,
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="45" fill="#1a1a2e" stroke="#FFD700" stroke-width="3"/>
+      <text x="50" y="68" text-anchor="middle" font-size="55" font-weight="bold" fill="#FFD700" font-family="serif">φ</text>
     </svg>`
   },
 
@@ -349,7 +540,7 @@ export const INSIGNES = [
   },
   {
     id: 'double_palme',
-    label: 'Double palme croisée (Diplôme)',
+    label: 'Double palme croisée (Diplôme / Sup Spé)',
     category: 'distinctions',
     defaultWidth: 50,
     defaultHeight: 50,
@@ -566,8 +757,8 @@ export const INSIGNES = [
   },
   {
     id: 'grappe_raisin',
-    label: 'Raisin (Bon vin)',
-    category: 'libres',
+    label: 'Raisin (Œnologie / Bon vin)',
+    category: 'emblemes',
     defaultWidth: 50,
     defaultHeight: 60,
     svg: `<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
@@ -724,8 +915,8 @@ export const INSIGNES = [
   },
   {
     id: 'lettre_psi',
-    label: 'Lettre Psi (CPA)',
-    category: 'lettres',
+    label: 'Lettre Psi (Psychologie / CPA)',
+    category: 'emblemes',
     defaultWidth: 45,
     defaultHeight: 45,
     svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -733,74 +924,4 @@ export const INSIGNES = [
       <text x="50" y="68" text-anchor="middle" font-size="52" font-weight="bold" fill="#FFD700" font-family="serif">Ψ</text>
     </svg>`
   }
-];
-
-// ─────────────────────────────────────────────────────────────────────────────
-// RUBANS D'ASSOCIATION
-// ─────────────────────────────────────────────────────────────────────────────
-export const RUBANS_ASSO = [
-  // --- Spécifiques de l'énoncé ---
-  { id: 'r_bigg', label: 'IUT Bourg BIGG BDE — Blanc / Rouge (Strayé)', colors: ['#DC143C', '#FFFFFF'], pattern: 'striped' },
-  { id: 'r_fourb', label: 'FOURB — Vert / Noir / Bleu (Tressé)', colors: ['#006400', '#000000', '#0000FF'], pattern: 'braided' },
-  { id: 'r_journalisme', label: 'Journalisme — Satin Blanc', colors: ['#FFFFFF', '#FFFFFF'] },
-  { id: 'r_humanitaire', label: 'Humanitaire — Velours Blanc', colors: ['#FFFFFF', '#FFFFFF'] },
-  { id: 'r_gaelis', label: 'GAELIS — Vert / Blanc', colors: ['#228B22', '#FFFFFF'] },
-  
-  // --- Représentants / Élus ---
-  { id: 'r_elus_nat', label: 'Élu National — Tricolore', colors: ['#002395', '#FFFFFF', '#ED2939'] },
-  { id: 'r_elus_euro', label: 'Élu Européen — Bleu et Or', colors: ['#003399', '#FFCC00'] },
-  { id: 'r_elus_inter', label: 'Élu International — Bleu pâle / Blanc', colors: ['#5B92E5', '#FFFFFF'] },
-  { id: 'r_elus_univ', label: 'Élu Universitaire — Jaune', colors: ['#FFD700', '#FFD700'] },
-
-  // --- Classiques ---
-  { id: 'r_bde_rouge_blanc',  label: 'BDE — Rouge / Blanc',              colors: ['#DC143C', '#FFFFFF'] },
-  { id: 'r_bde_bleu_or',      label: 'BDE — Bleu / Or',                  colors: ['#003DA5', '#FFD700'] },
-  { id: 'r_bds',              label: 'BDS (Sport) — Vert / Blanc',       colors: ['#228B22', '#FFFFFF'] },
-  { id: 'r_bda',              label: 'BDA (Arts) — Violet / Argent',     colors: ['#6A0DAD', '#C0C0C0'] }
-];
-
-// ─────────────────────────────────────────────────────────────────────────────
-// RUBANS DE VILLE
-// ─────────────────────────────────────────────────────────────────────────────
-export const RUBANS_VILLE = [
-  // --- Bourg-en-Bresse et Bresse ---
-  { id: 'rv_bourg',       label: 'Bourg-en-Bresse (Vert/Noir)', colors: ['#006400', '#000000'] },
-  
-  { id: 'rv_lyon',        label: 'Lyon (Rouge/Noir)',          colors: ['#DC143C', '#000000'] },
-  { id: 'rv_paris',       label: 'Paris (Bleu/Rouge)',         colors: ['#003DA5', '#DC143C'] },
-  { id: 'rv_grenoble',    label: 'Grenoble (Bleu/Or)',         colors: ['#003DA5', '#FFD700'] },
-  { id: 'rv_strasbourg',  label: 'Strasbourg (Rouge/Blanc)',   colors: ['#DC143C', '#FFFFFF'] }
-];
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ÉCUSSONS DE VILLE — blasons héraldiques SVG des villes universitaires
-// ─────────────────────────────────────────────────────────────────────────────
-export const ECUSSONS_VILLE = [
-  {
-    id: 'ev_bourg', label: 'Bourg-en-Bresse', defaultWidth: 60, defaultHeight: 72,
-    svg: `<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8,8 H92 V82 Q50,118 8,82 Z" fill="#006400" stroke="#004000" stroke-width="3"/>
-      <text x="50" y="55" text-anchor="middle" font-size="26" font-weight="bold" font-family="Georgia,serif" fill="#FFD700">BB</text>
-      <path d="M20,68 H80" stroke="#FFD700" stroke-width="1.5" opacity="0.7"/>
-      <text x="50" y="80" text-anchor="middle" font-size="9" font-family="Georgia,serif" fill="#FFD700">BRESSE</text>
-    </svg>`
-  },
-  {
-    id: 'ev_lyon', label: 'Lyon', defaultWidth: 60, defaultHeight: 72,
-    svg: `<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8,8 H92 V82 Q50,118 8,82 Z" fill="#1a1a1a" stroke="#DC143C" stroke-width="3"/>
-      <path d="M8,8 H92 V45 H8 Z" fill="#DC143C" opacity="0.8"/>
-      <text x="50" y="72" text-anchor="middle" font-size="22" font-weight="bold" font-family="Georgia,serif" fill="#FFFFFF">LY</text>
-    </svg>`
-  }
-];
-
-// ─────────────────────────────────────────────────────────────────────────────
-// CATÉGORIES D'INSIGNES
-// ─────────────────────────────────────────────────────────────────────────────
-export const INSIGNE_CATEGORIES = [
-  { id: 'emblemes',     label: 'Emblèmes de discipline' },
-  { id: 'libres',       label: 'Insignes libres & Régions' },
-  { id: 'distinctions', label: 'Distinctions & Cursus' },
-  { id: 'lettres',      label: 'Baccalauréats & Lettres' }
 ];

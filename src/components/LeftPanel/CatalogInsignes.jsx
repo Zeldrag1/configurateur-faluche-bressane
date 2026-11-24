@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { INSIGNES, INSIGNE_CATEGORIES } from '../../data/falucheData';
+import { INSIGNES, INSIGNE_CATEGORIES } from '../../data/insignes';
 
 /**
  * CatalogInsignes — Grille d'insignes SVG par catégorie.
